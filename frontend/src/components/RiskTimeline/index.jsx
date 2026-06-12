@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     <div
       style={{
         background: '#0d0d1a',
-        border: '1px solid rgba(99,102,241,0.25)',
+        border: '1px solid rgba(16,185,129,0.25)',
         borderRadius: '8px',
         padding: '10px 14px',
         boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
@@ -163,7 +163,7 @@ export function RiskTimeline({ data = [], userId }) {
             <div
               style={{
                 fontSize: '11px',
-                color: '#6366f1',
+                color: '#10b981',
                 fontFamily: "'JetBrains Mono', monospace",
                 marginTop: '2px',
               }}
@@ -217,14 +217,14 @@ export function RiskTimeline({ data = [], userId }) {
 
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(99,102,241,0.08)"
+            stroke="rgba(16,185,129,0.08)"
             vertical={false}
           />
 
           <XAxis
             dataKey="date"
             tick={{ fill: '#64748b', fontSize: 10, fontFamily: "'Inter', system-ui" }}
-            axisLine={{ stroke: 'rgba(99,102,241,0.1)' }}
+            axisLine={{ stroke: 'rgba(16,185,129,0.1)' }}
             tickLine={false}
             interval="preserveStartEnd"
           />

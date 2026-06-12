@@ -18,10 +18,10 @@ export async function scoreAction({
   try {
     const payload = {
       userId,
-      deviceFingerprint,
-      deviceTrustScore,
+      deviceFingerprint: deviceFingerprint || "",
+      deviceTrustScore: deviceTrustScore ?? 1.0,
       action,
-      context: context || {},
+      context: context || { ipAddress: "0.0.0.0" },
       behavioralSnapshot: behavioralSnapshot || null,
       transactionContext: transactionContext || null,
       userBaseline: userBaseline || null,
@@ -88,10 +88,12 @@ export async function scoreTransaction({
 
   const result = await scoreAction({
     userId,
-    deviceFingerprint: deviceFingerprint || null,
-    deviceTrustScore: null,
+    deviceFingerprint: deviceFingerprint || "",
+    deviceTrustScore: 1.0,
     action: 'transaction',
-    context,
+    context: {
+      ipAddress: ipAddress || "0.0.0.0",
+    },
     transactionContext,
   });
 

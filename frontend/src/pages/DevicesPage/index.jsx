@@ -65,7 +65,7 @@ export default function DevicesPage() {
         {loading ? (
           <div style={{ display: 'flex', justifyContent: 'center', padding: '60px' }}>
             <motion.div
-              style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #6366f1', borderTopColor: 'transparent' }}
+              style={{ width: '32px', height: '32px', borderRadius: '50%', border: '2px solid #10b981', borderTopColor: 'transparent' }}
               animate={{ rotate: 360 }}
               transition={{ duration: 0.8, repeat: Infinity, ease: 'linear' }}
             />

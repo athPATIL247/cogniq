@@ -1,55 +1,53 @@
 // filename: frontend/src/App.jsx
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './pages/Login';
-import CustomerDashboard from './pages/CustomerDashboard';
-import DevicesPage from './pages/DevicesPage';
-import OnboardingFlow from './pages/OnboardingFlow';
 
+const Landing          = lazy(() => import('./pages/Landing'));
+const Login            = lazy(() => import('./pages/Login'));
+const CustomerDashboard= lazy(() => import('./pages/CustomerDashboard'));
 const AnalystDashboard = lazy(() => import('./pages/AnalystDashboard'));
+const OnboardingFlow   = lazy(() => import('./pages/OnboardingFlow'));
+const DevicesPage      = lazy(() => import('./pages/DevicesPage'));
 
-// ─── Protected Route ──────────────────────────────────────────────────────────
+// ─── Token helpers ────────────────────────────────────────────────────────────
 
-function ProtectedRoute({ children, requiresEmployee = false }) {
-  const token = localStorage.getItem('tp_access_token');
-  if (!token) return <Navigate to="/login" replace />;
-
-  if (requiresEmployee) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      const isEmployee = payload.isEmployee === true;
-      if (!isEmployee) return <Navigate to="/dashboard" replace />;
-    } catch {
-      // If decode fails, server will reject
-    }
+function getTokenPayload() {
+  try {
+    const token = localStorage.getItem('tp_access_token');
+    if (!token) return null;
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch {
+    return null;
   }
+}
 
+// ─── Route guards ─────────────────────────────────────────────────────────────
+
+function ProtectedRoute({ children, employeeOnly = false }) {
+  const payload = getTokenPayload();
+  if (!payload) return <Navigate to="/login" replace />;
+  if (employeeOnly && !payload.isEmployee) return <Navigate to="/dashboard" replace />;
   return children;
 }
 
-// ─── Loading fallback ─────────────────────────────────────────────────────────
+// Redirect already-authenticated users away from login
+function AuthRoute({ children }) {
+  const payload = getTokenPayload();
+  if (payload) {
+    return <Navigate to={payload.isEmployee ? '/analyst' : '/dashboard'} replace />;
+  }
+  return children;
+}
+
+// ─── Loader ───────────────────────────────────────────────────────────────────
 
 function PageLoader() {
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: '#0b0b14',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <div
-        style={{
-          width: '40px',
-          height: '40px',
-          borderRadius: '50%',
-          border: '2px solid #6366f1',
-          borderTopColor: 'transparent',
-          animation: 'spin 0.8s linear infinite',
-        }}
-      />
+    <div style={{
+      minHeight: '100vh', background: '#080808',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <div className="spinner" style={{ width: 28, height: 28 }} />
     </div>
   );
 }
@@ -61,43 +59,22 @@ export default function App() {
     <BrowserRouter>
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          {/* Root → login */}
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          {/* Public landing */}
+          <Route path="/" element={<Landing />} />
 
-          {/* Public */}
-          <Route path="/login" element={<Login />} />
+          {/* Auth */}
+          <Route path="/login"   element={<AuthRoute><Login /></AuthRoute>} />
           <Route path="/onboard" element={<OnboardingFlow />} />
 
-          {/* Customer routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <CustomerDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/devices"
-            element={
-              <ProtectedRoute>
-                <DevicesPage />
-              </ProtectedRoute>
-            }
-          />
+          {/* Customer */}
+          <Route path="/dashboard" element={<ProtectedRoute><CustomerDashboard /></ProtectedRoute>} />
+          <Route path="/devices"   element={<ProtectedRoute><DevicesPage /></ProtectedRoute>} />
 
-          {/* Analyst dashboard — employee only */}
-          <Route
-            path="/analyst"
-            element={
-              <ProtectedRoute requiresEmployee>
-                <AnalystDashboard />
-              </ProtectedRoute>
-            }
-          />
+          {/* Analyst */}
+          <Route path="/analyst" element={<ProtectedRoute employeeOnly><AnalystDashboard /></ProtectedRoute>} />
 
-          {/* 404 */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

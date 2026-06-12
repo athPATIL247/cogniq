@@ -125,14 +125,14 @@ export function KYCAnalyzer() {
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
           style={{
-            border: `2px dashed ${dragOver ? '#6366f1' : 'rgba(99,102,241,0.3)'}`,
+            border: `2px dashed ${dragOver ? '#10b981' : 'rgba(16,185,129,0.3)'}`,
             borderRadius: '12px',
             padding: '48px 24px',
             textAlign: 'center',
             cursor: 'pointer',
-            background: dragOver ? 'rgba(99,102,241,0.06)' : 'rgba(13,13,26,0.8)',
+            background: dragOver ? 'rgba(16,185,129,0.06)' : 'rgba(13,13,26,0.8)',
             transition: 'all 0.2s ease',
-            boxShadow: dragOver ? '0 0 20px rgba(99,102,241,0.15)' : 'none',
+            boxShadow: dragOver ? '0 0 20px rgba(16,185,129,0.15)' : 'none',
           }}
         >
           <input
@@ -149,10 +149,10 @@ export function KYCAnalyzer() {
           >
             <Upload
               size={32}
-              color={dragOver ? '#6366f1' : '#64748b'}
+              color={dragOver ? '#10b981' : '#64748b'}
               style={{ marginBottom: '12px' }}
             />
-            <div style={{ fontSize: '14px', fontWeight: '600', color: dragOver ? '#a5b4fc' : '#94a3b8', fontFamily: "'Inter', system-ui", marginBottom: '6px' }}>
+            <div style={{ fontSize: '14px', fontWeight: '600', color: dragOver ? '#6ee7b7' : '#94a3b8', fontFamily: "'Inter', system-ui", marginBottom: '6px' }}>
               Drop Aadhaar / PAN here or click to upload
             </div>
             <div style={{ fontSize: '12px', color: '#64748b', fontFamily: "'Inter', system-ui" }}>
@@ -174,7 +174,7 @@ export function KYCAnalyzer() {
             exit={{ opacity: 0, y: -12 }}
             style={{
               background: '#0d0d1a',
-              border: '1px solid rgba(99,102,241,0.2)',
+              border: '1px solid rgba(16,185,129,0.2)',
               borderRadius: '12px',
               padding: '20px',
             }}
@@ -189,7 +189,7 @@ export function KYCAnalyzer() {
                     height: '56px',
                     objectFit: 'cover',
                     borderRadius: '6px',
-                    border: '1px solid rgba(99,102,241,0.2)',
+                    border: '1px solid rgba(16,185,129,0.2)',
                   }}
                 />
               ) : (
@@ -197,14 +197,14 @@ export function KYCAnalyzer() {
                   style={{
                     width: '80px',
                     height: '56px',
-                    background: 'rgba(99,102,241,0.1)',
+                    background: 'rgba(16,185,129,0.1)',
                     borderRadius: '6px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <FileText size={24} color="#6366f1" />
+                  <FileText size={24} color="#10b981" />
                 </div>
               )}
 
@@ -224,9 +224,9 @@ export function KYCAnalyzer() {
                   animate={{ rotate: 360 }}
                   transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                 >
-                  <Loader size={16} color="#6366f1" />
+                  <Loader size={16} color="#10b981" />
                 </motion.div>
-                <span style={{ fontSize: '12px', color: '#a5b4fc', fontFamily: "'Inter', system-ui" }}>
+                <span style={{ fontSize: '12px', color: '#6ee7b7', fontFamily: "'Inter', system-ui" }}>
                   Analyzing document authenticity…
                 </span>
               </div>
@@ -238,7 +238,7 @@ export function KYCAnalyzer() {
                 style={{
                   marginTop: '12px',
                   height: '2px',
-                  background: 'rgba(99,102,241,0.15)',
+                  background: 'rgba(16,185,129,0.15)',
                   borderRadius: '1px',
                   overflow: 'hidden',
                 }}
@@ -246,7 +246,7 @@ export function KYCAnalyzer() {
                 <motion.div
                   style={{
                     height: '100%',
-                    background: 'linear-gradient(90deg, #6366f1, #a5b4fc)',
+                    background: 'linear-gradient(90deg, #10b981, #6ee7b7)',
                     borderRadius: '1px',
                   }}
                   animate={{ x: ['-100%', '100%'] }}
@@ -339,7 +339,7 @@ export function KYCAnalyzer() {
 
               {/* Confidence bar */}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ height: '8px', background: 'rgba(99,102,241,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
+                <div style={{ height: '8px', background: 'rgba(16,185,129,0.1)', borderRadius: '4px', overflow: 'hidden' }}>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${state.result.confidence}%` }}
@@ -416,9 +416,9 @@ export function KYCAnalyzer() {
                 marginTop: '20px',
                 padding: '8px 16px',
                 borderRadius: '6px',
-                background: 'rgba(99,102,241,0.1)',
-                border: '1px solid rgba(99,102,241,0.25)',
-                color: '#a5b4fc',
+                background: 'rgba(16,185,129,0.1)',
+                border: '1px solid rgba(16,185,129,0.25)',
+                color: '#6ee7b7',
                 fontSize: '12px',
                 fontWeight: '600',
                 fontFamily: "'Inter', system-ui",

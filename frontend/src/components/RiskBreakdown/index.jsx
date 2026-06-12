@@ -27,7 +27,7 @@ const CustomTooltip = ({ active, payload }) => {
     <div
       style={{
         background: '#0d0d1a',
-        border: '1px solid rgba(99,102,241,0.25)',
+        border: '1px solid rgba(16,185,129,0.25)',
         borderRadius: '8px',
         padding: '10px 14px',
         boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
@@ -133,7 +133,7 @@ export function RiskBreakdown({ factors = [] }) {
         >
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="rgba(99,102,241,0.08)"
+            stroke="rgba(16,185,129,0.08)"
             horizontal={false}
           />
 
@@ -141,7 +141,7 @@ export function RiskBreakdown({ factors = [] }) {
             type="number"
             domain={[0, 100]}
             tick={{ fill: '#64748b', fontSize: 10, fontFamily: "'JetBrains Mono', monospace" }}
-            axisLine={{ stroke: 'rgba(99,102,241,0.1)' }}
+            axisLine={{ stroke: 'rgba(16,185,129,0.1)' }}
             tickLine={false}
           />
 
@@ -166,7 +166,7 @@ export function RiskBreakdown({ factors = [] }) {
             tickLine={false}
           />
 
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(99,102,241,0.06)' }} />
+          <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(16,185,129,0.06)' }} />
 
           <Bar dataKey="contribution" radius={[0, 3, 3, 0]} label={<CustomLabel />}>
             {sorted.map((entry, index) => (
@@ -185,7 +185,7 @@ export function RiskBreakdown({ factors = [] }) {
         style={{
           marginTop: '12px',
           paddingTop: '12px',
-          borderTop: '1px solid rgba(99,102,241,0.1)',
+          borderTop: '1px solid rgba(16,185,129,0.1)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',

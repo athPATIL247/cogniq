@@ -78,7 +78,7 @@ export function RiskFeed({ events = [], filterLevel = null, maxVisible = MAX_VIS
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 0, overflow: 'hidden', maxHeight: '100%' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: '24px 1fr 80px 90px 80px', gap: '8px', padding: '6px 12px', borderBottom: '1px solid rgba(99,102,241,0.1)', marginBottom: '2px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '24px 1fr 80px 90px 80px', gap: '8px', padding: '6px 12px', borderBottom: '1px solid rgba(16,185,129,0.1)', marginBottom: '2px' }}>
         {['', 'USER / ACTION', 'SCORE', 'TIME', 'RESULT'].map((h, i) => (
           <div key={i} style={{ fontSize: '10px', letterSpacing: '1.5px', color: '#64748b', fontFamily: "'Inter', system-ui", fontWeight: 500 }}>
             {h}
@@ -119,10 +119,10 @@ export function RiskFeed({ events = [], filterLevel = null, maxVisible = MAX_VIS
                 alignItems: 'center', padding: '8px 12px',
                 borderLeft: isCritical ? `3px solid ${color}` : '3px solid transparent',
                 boxShadow: isCritical ? `inset 0 0 20px rgba(239,68,68,0.04)` : 'none',
-                borderBottom: '1px solid rgba(99,102,241,0.05)',
+                borderBottom: '1px solid rgba(16,185,129,0.05)',
                 cursor: 'default', transition: 'background 0.2s ease',
               }}
-              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(99,102,241,0.04)'; }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(16,185,129,0.04)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
             >
               <div style={{ display: 'flex', justifyContent: 'center' }}>

@@ -74,7 +74,7 @@ function AlertCard({ alert, onUpdateAlert }) {
       transition={{ duration: 0.2, ease: 'easeOut' }}
       style={{
         background: '#0d0d1a',
-        border: '1px solid rgba(99,102,241,0.12)',
+        border: '1px solid rgba(16,185,129,0.12)',
         borderLeft: `4px solid ${cfg.border}`,
         borderRadius: '8px',
         padding: '14px 16px',
@@ -86,14 +86,14 @@ function AlertCard({ alert, onUpdateAlert }) {
       }}
       onMouseEnter={(e) => {
         e.currentTarget.style.transform = 'translateY(-1px)';
-        e.currentTarget.style.borderColor = `rgba(99,102,241,0.25)`;
+        e.currentTarget.style.borderColor = `rgba(16,185,129,0.25)`;
         e.currentTarget.style.boxShadow = alert.severity?.toUpperCase() === 'CRITICAL'
           ? `0 0 30px rgba(220,38,38,0.2), 0 4px 20px rgba(0,0,0,0.3)`
           : '0 4px 20px rgba(0,0,0,0.3)';
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = 'rgba(99,102,241,0.12)';
+        e.currentTarget.style.borderColor = 'rgba(16,185,129,0.12)';
         e.currentTarget.style.boxShadow = alert.severity?.toUpperCase() === 'CRITICAL'
           ? `0 0 20px rgba(220,38,38,0.15), inset 0 0 30px rgba(220,38,38,0.03)`
           : 'none';
@@ -199,9 +199,9 @@ function AlertCard({ alert, onUpdateAlert }) {
               style={{
                 padding: '2px 7px',
                 borderRadius: '3px',
-                background: 'rgba(99,102,241,0.1)',
-                border: '1px solid rgba(99,102,241,0.2)',
-                color: '#a5b4fc',
+                background: 'rgba(16,185,129,0.1)',
+                border: '1px solid rgba(16,185,129,0.2)',
+                color: '#6ee7b7',
                 fontSize: '10px',
                 fontFamily: "'Inter', system-ui",
               }}
@@ -225,7 +225,7 @@ function AlertCard({ alert, onUpdateAlert }) {
             <div
               style={{
                 padding: '10px',
-                background: 'rgba(99,102,241,0.04)',
+                background: 'rgba(16,185,129,0.04)',
                 borderRadius: '6px',
                 marginBottom: '12px',
                 fontSize: '11px',
@@ -290,9 +290,9 @@ function AlertCard({ alert, onUpdateAlert }) {
             gap: '5px',
             padding: '5px 12px',
             borderRadius: '5px',
-            background: 'rgba(99,102,241,0.1)',
-            border: '1px solid rgba(99,102,241,0.2)',
-            color: '#a5b4fc',
+            background: 'rgba(16,185,129,0.1)',
+            border: '1px solid rgba(16,185,129,0.2)',
+            color: '#6ee7b7',
             fontSize: '11px',
             fontWeight: '600',
             fontFamily: "'Inter', system-ui",
@@ -301,10 +301,10 @@ function AlertCard({ alert, onUpdateAlert }) {
             transition: 'all 0.15s ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.background = 'rgba(99,102,241,0.18)';
+            e.currentTarget.style.background = 'rgba(16,185,129,0.18)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = 'rgba(99,102,241,0.1)';
+            e.currentTarget.style.background = 'rgba(16,185,129,0.1)';
           }}
         >
           <XCircle size={12} />
@@ -365,10 +365,10 @@ export function AlertPanel({ alerts = [], onUpdateAlert }) {
         padding: '4px 10px',
         borderRadius: '4px',
         border: current === value
-          ? `1px solid ${color ?? '#6366f1'}`
-          : '1px solid rgba(99,102,241,0.15)',
-        background: current === value ? `${color ?? '#6366f1'}20` : 'transparent',
-        color: current === value ? (color ?? '#a5b4fc') : '#64748b',
+          ? `1px solid ${color ?? '#10b981'}`
+          : '1px solid rgba(16,185,129,0.15)',
+        background: current === value ? `${color ?? '#10b981'}20` : 'transparent',
+        color: current === value ? (color ?? '#6ee7b7') : '#64748b',
         fontSize: '10px',
         fontWeight: '600',
         letterSpacing: '0.8px',
@@ -390,7 +390,7 @@ export function AlertPanel({ alerts = [], onUpdateAlert }) {
           gap: '16px',
           alignItems: 'center',
           padding: '10px 0',
-          borderBottom: '1px solid rgba(99,102,241,0.1)',
+          borderBottom: '1px solid rgba(16,185,129,0.1)',
           flexWrap: 'wrap',
         }}
       >

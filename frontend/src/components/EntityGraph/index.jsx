@@ -6,14 +6,14 @@ import { AlertTriangle, X } from 'lucide-react';
 
 function getNodeColor(node) {
   if (node.suspicious) return '#ef4444';
-  if (node.type === 'employee') return '#6366f1';
+  if (node.type === 'employee') return '#10b981';
   if (node.type === 'external') return '#22c55e';
   return '#64748b';
 }
 
 function getLinkColor(link) {
   if (link.suspicious) return '#ef4444';
-  return 'rgba(99,102,241,0.2)';
+  return 'rgba(16,185,129,0.2)';
 }
 
 function getLinkWidth(link) {
@@ -33,7 +33,7 @@ function NodeInfoPanel({ node, onClose }) {
         right: '12px',
         width: '240px',
         background: '#0d0d1a',
-        border: `1px solid ${node.suspicious ? 'rgba(239,68,68,0.4)' : 'rgba(99,102,241,0.25)'}`,
+        border: `1px solid ${node.suspicious ? 'rgba(239,68,68,0.4)' : 'rgba(16,185,129,0.25)'}`,
         borderRadius: '10px',
         padding: '14px',
         boxShadow: node.suspicious
@@ -248,7 +248,7 @@ export function EntityGraph({ graphData, anomalyDescription }) {
           borderRadius: '10px',
           overflow: 'hidden',
           background: 'rgba(6,6,20,0.8)',
-          border: '1px solid rgba(99,102,241,0.12)',
+          border: '1px solid rgba(16,185,129,0.12)',
           minHeight: '400px',
         }}
       >
@@ -291,7 +291,7 @@ export function EntityGraph({ graphData, anomalyDescription }) {
           }}
         >
           {[
-            { color: '#6366f1', label: 'Employee' },
+            { color: '#10b981', label: 'Employee' },
             { color: '#22c55e', label: 'External' },
             { color: '#ef4444', label: 'Suspicious' },
           ].map(({ color, label }) => (

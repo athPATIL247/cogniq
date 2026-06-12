@@ -8,7 +8,7 @@ import { RiskFeed } from '../../components/RiskFeed';
 import { useRiskFeed } from '../../hooks/useRiskFeed';
 import { getDashboardStats, getActiveAlerts, updateAlert, getEntityGraph, getAllUsers } from '../../services/api';
 
-function StatCard({ label, value, color = '#6366f1', sub }) {
+function StatCard({ label, value, color = '#10b981', sub }) {
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -97,16 +97,16 @@ export default function AnalystDashboard() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#0b0b14',
-      fontFamily: "'Inter', system-ui, sans-serif",
-      color: '#e2e8f0',
+      minHeight: '100vh', background: '#080808',
+      fontFamily: "'Space Grotesk', system-ui, sans-serif",
+      color: '#f5f5f5',
     }}>
       {/* Background grid */}
       <div style={{
         position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
         backgroundImage: `
-          linear-gradient(rgba(99,102,241,0.02) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(99,102,241,0.02) 1px, transparent 1px)
+          linear-gradient(rgba(16,185,129,0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(16,185,129,0.02) 1px, transparent 1px)
         `,
         backgroundSize: '60px 60px',
       }} />
@@ -118,11 +118,14 @@ export default function AnalystDashboard() {
           padding: '16px 24px',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           backdropFilter: 'blur(20px)',
-          background: 'rgba(11,11,20,0.8)',
+          background: 'rgba(8,8,8,0.92)',
           position: 'sticky', top: 0, zIndex: 10,
+          borderBottom: '1px solid #1a1a1a',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <ShieldCheck size={24} color="#6366f1" />
+            <div style={{ width: '30px', height: '30px', borderRadius: '8px', background: '#10b981', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 0 12px rgba(16,185,129,0.3)' }}>
+              <ShieldCheck size={16} color="#080808" strokeWidth={2.5} />
+            </div>
             <div>
               <div style={{ fontSize: '16px', fontWeight: '700', letterSpacing: '-0.3px' }}>Cogniq</div>
               <div style={{ fontSize: '11px', color: '#64748b', letterSpacing: '1px' }}>ANALYST DASHBOARD</div>
@@ -130,15 +133,15 @@ export default function AnalystDashboard() {
             <div style={{
               marginLeft: '16px', display: 'flex', alignItems: 'center', gap: '6px',
               padding: '4px 10px', borderRadius: '20px',
-              background: connected ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)',
-              border: `1px solid ${connected ? 'rgba(34,197,94,0.2)' : 'rgba(239,68,68,0.2)'}`,
+              background: connected ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
+              border: `1px solid ${connected ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`,
             }}>
               <motion.div
                 animate={{ opacity: connected ? [1, 0.3, 1] : 1 }}
                 transition={{ duration: 1.5, repeat: Infinity }}
-                style={{ width: '6px', height: '6px', borderRadius: '50%', background: connected ? '#22c55e' : '#ef4444' }}
+                style={{ width: '6px', height: '6px', borderRadius: '50%', background: connected ? '#10b981' : '#ef4444' }}
               />
-              <span style={{ fontSize: '11px', color: connected ? '#22c55e' : '#ef4444', fontWeight: '600', letterSpacing: '0.5px' }}>
+              <span style={{ fontSize: '11px', color: connected ? '#10b981' : '#ef4444', fontWeight: '600', letterSpacing: '0.5px' }}>
                 {connected ? 'LIVE' : 'OFFLINE'}
               </span>
             </div>
@@ -171,7 +174,7 @@ export default function AnalystDashboard() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <StatCard label="Active Alerts" value={stats.activeAlerts ?? 0} color="#ef4444" />
                 <StatCard label="Blocked Today" value={stats.blockedToday ?? 0} color="#f97316" />
-                <StatCard label="Users Monitored" value={stats.totalUsersMonitored ?? 0} color="#6366f1" />
+                <StatCard label="Users Monitored" value={stats.totalUsersMonitored ?? 0} color="#10b981" />
                 <StatCard label="Avg Risk Score" value={`${Math.round(stats.avgRiskScore ?? 0)}`} color={avgRisk > 60 ? '#ef4444' : avgRisk > 35 ? '#f59e0b' : '#22c55e'} sub="last 24h" />
               </div>
             )}
@@ -200,8 +203,8 @@ export default function AnalystDashboard() {
                   onClick={() => setActiveTab(tab.id)}
                   style={{
                     padding: '8px 16px', borderRadius: '8px', border: 'none',
-                    background: activeTab === tab.id ? 'rgba(99,102,241,0.15)' : 'transparent',
-                    color: activeTab === tab.id ? '#a5b4fc' : '#64748b',
+                    background: activeTab === tab.id ? 'rgba(16,185,129,0.15)' : 'transparent',
+                    color: activeTab === tab.id ? '#6ee7b7' : '#64748b',
                     cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === tab.id ? '600' : '400',
                     fontFamily: 'inherit', transition: 'all 0.2s',
                   }}

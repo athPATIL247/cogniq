@@ -68,6 +68,13 @@ class FusionEngine:
                     weights[k] += per_key
 
         weighted_sum = sum(scores[k] * weights[k] for k in weights if k in scores)
+        
+        # Escalate final score if any single factor is extremely high (prevents dilution)
+        max_subscore = max(scores.values()) if scores else 0.0
+        if max_subscore >= 60.0:
+            # Force the final score high enough to block if one sub-score is critical
+            weighted_sum = max(weighted_sum, max_subscore * 1.4)
+            
         final_score = float(min(max(weighted_sum, 0.0), 100.0))
 
         all_factors: list[dict] = []

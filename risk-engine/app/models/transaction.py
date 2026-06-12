@@ -26,16 +26,13 @@ class TransactionModel:
     ) -> tuple[float, list[dict]]:
         """Returns (score_0_to_100, factors_list)."""
         if not user_baseline:
-            return (
-                30.0,
-                [
-                    {
-                        "factor": "no_baseline",
-                        "contribution": 30.0,
-                        "description": "Insufficient transaction history",
-                    }
-                ],
-            )
+            # Fallback to a standard baseline so massive anomalies still get caught
+            user_baseline = {
+                "avg_amount": 1000.0,
+                "std_amount": 500.0,
+                "known_categories": ["general", "food", "bills", "shopping"],
+                "typical_hours": list(range(8, 22))
+            }
 
         factors: list[dict] = []
         total_score = 0.0
@@ -55,7 +52,7 @@ class TransactionModel:
         # 1. Amount Z-score
         safe_std = max(std_amount, 1.0)
         z = (amount - avg_amount) / safe_std
-        amount_contribution = min(abs(z) * 15.0, 40.0)
+        amount_contribution = min(abs(z) * 15.0, 60.0)
         total_score += amount_contribution
 
         if amount_contribution > 0:
@@ -65,8 +62,8 @@ class TransactionModel:
                     "factor": "amount_anomaly",
                     "contribution": round(amount_contribution, 2),
                     "description": (
-                        f"Transaction amount ₹{amount:.0f} is {abs(z):.1f}σ "
-                        f"{direction} user average ₹{avg_amount:.0f}"
+                        f"Amount ₹{amount:,.0f} is highly unusual "
+                        f"(avg ₹{avg_amount:,.0f})"
                     ),
                 }
             )

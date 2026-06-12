@@ -63,7 +63,7 @@ function OTPInput({ onSuccess, onCancel, sessionToken }) {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '12px' }}>
-          <ShieldAlert size={32} color="#6366f1" />
+          <ShieldAlert size={32} color="#10b981" />
         </div>
         <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#f1f5f9', margin: 0 }}>Two-Factor Verification</h2>
         <p style={{ fontSize: '14px', color: '#94a3b8', marginTop: '8px' }}>Enter the 6-digit code sent to your device</p>
@@ -90,8 +90,8 @@ function OTPInput({ onSuccess, onCancel, sessionToken }) {
               width: '44px', height: '56px', textAlign: 'center',
               fontSize: '20px', fontWeight: '700', fontFamily: "'JetBrains Mono', monospace",
               borderRadius: '8px',
-              border: `2px solid ${error ? '#ef4444' : d ? '#6366f1' : 'rgba(255,255,255,0.1)'}`,
-              background: error ? 'rgba(239,68,68,0.1)' : d ? 'rgba(99,102,241,0.1)' : 'rgba(255,255,255,0.03)',
+              border: `2px solid ${error ? '#ef4444' : d ? '#10b981' : 'rgba(255,255,255,0.1)'}`,
+              background: error ? 'rgba(239,68,68,0.1)' : d ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.03)',
               color: '#f1f5f9', outline: 'none', transition: 'all 0.2s',
             }}
           />
@@ -109,7 +109,7 @@ function OTPInput({ onSuccess, onCancel, sessionToken }) {
         disabled={loading || digits.join('').length < 6}
         style={{
           width: '100%', padding: '12px', borderRadius: '8px',
-          background: loading || digits.join('').length < 6 ? 'rgba(99,102,241,0.3)' : '#6366f1',
+          background: loading || digits.join('').length < 6 ? 'rgba(16,185,129,0.3)' : '#10b981',
           color: 'white', fontWeight: '600', border: 'none', cursor: 'pointer',
           fontSize: '15px', transition: 'all 0.2s',
         }}
@@ -120,7 +120,7 @@ function OTPInput({ onSuccess, onCancel, sessionToken }) {
       <button
         disabled={resendCooldown > 0}
         onClick={() => setResendCooldown(30)}
-        style={{ background: 'none', border: 'none', color: resendCooldown > 0 ? '#64748b' : '#6366f1', cursor: 'pointer', fontSize: '14px' }}
+        style={{ background: 'none', border: 'none', color: resendCooldown > 0 ? '#64748b' : '#10b981', cursor: 'pointer', fontSize: '14px' }}
       >
         {resendCooldown > 0 ? `Resend OTP in ${resendCooldown}s` : 'Resend OTP'}
       </button>
@@ -164,20 +164,20 @@ function PushApproval({ onSuccess, onCancel, sessionToken }) {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px', textAlign: 'center' }}>
       <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 2, repeat: Infinity }}>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <Smartphone size={64} color="#6366f1" />
+          <Smartphone size={64} color="#10b981" />
         </div>
       </motion.div>
       <div>
         <h2 style={{ fontSize: '20px', fontWeight: '600', color: '#f1f5f9', margin: 0 }}>Approve on your phone</h2>
         <p style={{ fontSize: '14px', color: '#94a3b8', marginTop: '8px' }}>
-          Tap <span style={{ color: '#a5b4fc', fontWeight: '500' }}>"Yes, it's me"</span> on your device
+          Tap <span style={{ color: '#6ee7b7', fontWeight: '500' }}>"Yes, it's me"</span> on your device
         </p>
       </div>
 
       {!approved ? (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', fontSize: '14px' }}>
           <motion.div
-            style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid #6366f1', borderTopColor: 'transparent' }}
+            style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid #10b981', borderTopColor: 'transparent' }}
             animate={{ rotate: 360 }}
             transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           />
@@ -190,7 +190,7 @@ function PushApproval({ onSuccess, onCancel, sessionToken }) {
       )}
 
       <div style={{ width: '100%', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '16px' }}>
-        <button onClick={handleApproveHere} style={{ background: 'none', border: 'none', color: '#6366f1', cursor: 'pointer', fontSize: '14px' }}>
+        <button onClick={handleApproveHere} style={{ background: 'none', border: 'none', color: '#10b981', cursor: 'pointer', fontSize: '14px' }}>
           Approve here instead →
         </button>
       </div>
