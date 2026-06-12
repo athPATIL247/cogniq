@@ -257,31 +257,6 @@ export default function Login() {
                     Log in to your secure portal.
                   </p>
 
-                  {/* Quick access profiles */}
-                  <div style={{ marginBottom: '4px' }}>
-                    <div style={{ fontSize: '11px', color: '#64748b', letterSpacing: '0.5px', marginBottom: '10px', textTransform: 'uppercase' }}>Quick Access</div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      {[
-                        { label: 'Customer — Alice Sharma', email: 'alice@demo.com', sub: 'Trusted user · zero-friction login' },
-                        { label: 'Analyst — Ravi Analyst', email: 'ravi.analyst@bank.com', sub: 'SOC dashboard · live feed' },
-                      ].map((demo) => (
-                        <button
-                          key={demo.email}
-                          type="button"
-                          onClick={() => { setEmail(demo.email); setPassword('password123'); setError(''); }}
-                          style={{
-                            padding: '12px 14px', borderRadius: '10px', textAlign: 'left', cursor: 'pointer',
-                            background: email === demo.email ? 'rgba(16,185,129,0.08)' : '#111',
-                            border: `1px solid ${email === demo.email ? 'rgba(16,185,129,0.25)' : '#222'}`,
-                            fontFamily: 'inherit', transition: 'all 0.15s',
-                          }}
-                        >
-                          <div style={{ fontSize: '13px', fontWeight: '600', color: '#f5f5f5' }}>{demo.label}</div>
-                          <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>{demo.sub}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
 
                   <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     <div>
