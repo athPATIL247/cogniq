@@ -81,10 +81,10 @@ export default function OnboardingFlow() {
     try {
       const snap = getSnapshot();
       const formBehavior = {
-        fieldCompletionTimes: fieldTimes,
-        backspaceCount: 2,
-        totalKeystrokes: snap.avgDwellTime > 0 ? 80 : 40,
-        mouseEntropy: snap.mouseVelocity > 0 ? 0.6 : 0.05,
+        fieldCompletionTimes: fieldTimes.length > 0 ? fieldTimes : [snap.avgDwellTime || 1200],
+        backspaceCount: snap.backspaceCount ?? 0,
+        totalKeystrokes: Math.max(snap.totalKeystrokes || 1, 1),
+        mouseEntropy: snap.mouseEntropy ?? (snap.mouseVelocity > 0 ? 0.5 : 0.05),
       };
 
       const res = await analyzeOnboarding({
@@ -323,8 +323,8 @@ export default function OnboardingFlow() {
                         </div>
                         <div style={{ color: '#f5f5f5', fontSize: '16px', fontWeight: '500' }}>Click to upload document</div>
                         <div style={{ color: '#555', fontSize: '13px', marginTop: '8px' }}>JPG, PNG, or PDF — max 10MB</div>
-                        <div style={{ color: '#10b981', fontSize: '12px', marginTop: '16px', padding: '6px 12px', background: 'rgba(16,185,129,0.1)', borderRadius: '20px', display: 'inline-block' }}>
-                          Test: upload "fake_id.jpg" to trigger AI block
+                        <div style={{ color: '#64748b', fontSize: '12px', marginTop: '16px' }}>
+                          Documents are scanned with forensic AI before approval
                         </div>
                       </div>
                     )}
@@ -336,8 +336,15 @@ export default function OnboardingFlow() {
                       background: isSyntheticDoc ? 'rgba(239,68,68,0.08)' : 'rgba(16,185,129,0.08)',
                       border: `1px solid ${isSyntheticDoc ? 'rgba(239,68,68,0.2)' : 'rgba(16,185,129,0.2)'}`,
                     }}>
-                      <div style={{ fontSize: '14px', fontWeight: '600', color: isSyntheticDoc ? '#fca5a5' : '#6ee7b7' }}>
-                        {isSyntheticDoc ? 'Synthetic Document Detected' : 'Document Verified Authentic'}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: kycResult.flags?.length ? '8px' : 0 }}>
+                        <div style={{ fontSize: '14px', fontWeight: '600', color: isSyntheticDoc ? '#fca5a5' : '#6ee7b7' }}>
+                          {isSyntheticDoc ? 'Synthetic Document Detected' : 'Document Verified Authentic'}
+                        </div>
+                        {kycResult.confidence != null && (
+                          <span style={{ fontSize: '12px', fontFamily: "'JetBrains Mono', monospace", color: isSyntheticDoc ? '#ef4444' : '#10b981', padding: '2px 8px', background: isSyntheticDoc ? 'rgba(239,68,68,0.1)' : 'rgba(16,185,129,0.1)', borderRadius: '4px' }}>
+                            {(kycResult.confidence * 100).toFixed(0)}% {isSyntheticDoc ? 'synthetic' : 'authentic'}
+                          </span>
+                        )}
                       </div>
                       {kycResult.flags?.length > 0 && (
                         <ul style={{ margin: '8px 0 0', paddingLeft: '16px', fontSize: '13px', color: '#a1a1a1', lineHeight: 1.6 }}>

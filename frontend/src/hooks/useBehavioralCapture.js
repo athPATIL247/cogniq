@@ -10,6 +10,7 @@ export function useBehavioralCapture() {
   const flightTimes = useRef([]);
   const lastKeyUpTime = useRef(null);
   const keyDownCount = useRef(0);
+  const backspaceCount = useRef(0);
 
   const mouseVelocitySamples = useRef([]);
   const lastMousePos = useRef(null);
@@ -21,6 +22,9 @@ export function useBehavioralCapture() {
   const handleKeyDown = useCallback((e) => {
     keyDownTimestamps.current[e.code] = Date.now();
     keyDownCount.current += 1;
+    if (e.key === 'Backspace' || e.code === 'Backspace') {
+      backspaceCount.current += 1;
+    }
   }, []);
 
   const handleKeyUp = useCallback((e) => {
@@ -108,6 +112,10 @@ export function useBehavioralCapture() {
     const swipePressure = mean(touchPressureSamples.current);
     const actionsPerMin = sessionDurationMin > 0 ? totalActions / sessionDurationMin : 0;
 
+    const mouseEntropy = mouseVelocitySamples.current.length >= 3
+      ? Math.min(stdDev(mouseVelocitySamples.current) / (mean(mouseVelocitySamples.current) + 1), 1)
+      : mouseVelocity > 0 ? 0.5 : 0.05;
+
     return {
       avgDwellTime: Math.round(avgDwellTime),
       dwellStdDev: Math.round(dwellStdDev),
@@ -117,6 +125,9 @@ export function useBehavioralCapture() {
       sessionDurationMin: Math.round(sessionDurationMin * 100) / 100,
       actionsPerMin: Math.round(actionsPerMin * 10) / 10,
       mouseVelocity: Math.round(mouseVelocity),
+      mouseEntropy: Math.round(mouseEntropy * 1000) / 1000,
+      backspaceCount: backspaceCount.current,
+      totalKeystrokes: keyDownCount.current,
       swipePressure: Math.round(swipePressure * 1000) / 1000,
       hourOfDay: new Date().getHours(),
     };

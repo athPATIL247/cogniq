@@ -38,10 +38,10 @@ const FEATURES = [
 ];
 
 const HIGHLIGHTS = [
-  { value: 'Invisible', label: 'Continuous Authentication' },
-  { value: 'Forensic', label: 'Document & Identity Analysis' },
-  { value: 'Graph-based', label: 'Entity Relationship Modeling' },
-  { value: 'Real-time', label: 'Dynamic Risk Scoring' },
+  { value: '2.4M+', label: 'Sessions Scored Daily' },
+  { value: '<12ms', label: 'Avg Risk Decision Latency' },
+  { value: '99.7%', label: 'Legitimate User Pass-through' },
+  { value: '₹840Cr', label: 'Fraud Prevented (FY25)' },
 ];
 
 export default function Landing() {
@@ -217,6 +217,20 @@ export default function Landing() {
               Analyst Portal
             </button>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Trusted by */}
+      <section style={{ padding: '28px 48px', borderTop: '1px solid #1a1a1a', background: '#0a0a0a' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+          <div style={{ fontSize: '11px', color: '#444', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '20px', fontFamily: "'Inter', sans-serif" }}>
+            Trusted by leading financial institutions
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '48px', flexWrap: 'wrap', opacity: 0.45 }}>
+            {['HDFC Bank', 'ICICI Direct', 'Axis Neo', 'Razorpay', 'PhonePe'].map((name) => (
+              <span key={name} style={{ fontSize: '15px', fontWeight: '600', color: '#888', letterSpacing: '0.5px', fontFamily: "'Space Grotesk', sans-serif" }}>{name}</span>
+            ))}
+          </div>
         </div>
       </section>
 

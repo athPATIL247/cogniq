@@ -325,6 +325,30 @@ async def onboarding_analyze(body: OnboardingAnalyzeRequest):
             f"Low mouse entropy ({fb.mouseEntropy:.3f} < 0.1) — robotic mouse movement"
         )
 
+    # ----------------------------------------------------------------
+    # 4. Erratic / non-human cadence (demo: mash keys + many backspaces)
+    # ----------------------------------------------------------------
+    if len(times) >= 2:
+        mean_t = statistics.mean(times)
+        std_t = statistics.stdev(times) if len(times) > 1 else 0.0
+        cv_erratic = std_t / mean_t if mean_t > 0 else 0.0
+        if cv_erratic > 0.75:
+            bot_score += 40
+            flags.append(
+                f"Highly erratic field timing (CV={cv_erratic:.3f}) — non-human cadence"
+            )
+        if mean_t < 400 and total_keystrokes > 60:
+            bot_score += 25
+            flags.append(
+                f"Form filled too fast ({mean_t:.0f}ms avg per field, {total_keystrokes} keystrokes)"
+            )
+
+    if backspace_rate > 0.18:
+        bot_score += 35
+        flags.append(
+            f"Excessive corrections ({backspace_rate:.1%} backspace rate) — anomalous typing"
+        )
+
     bot_score = min(bot_score, 100)
     is_suspected_bot = bot_score >= 60
 

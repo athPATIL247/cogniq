@@ -6,7 +6,7 @@
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
     "migrate": "node src/scripts/migrate.js",
-    "seed": "node src/scripts/seed.js"
+    "seed": "bash src/scripts/seed.sh"
   },
   "devDependencies": {
     "@types/bun": "latest",

@@ -1,7 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Send, AlertCircle, LogOut, Monitor, TrendingUp, ArrowRight } from 'lucide-react';
+import { ShieldCheck, Send, AlertCircle, LogOut, Monitor, TrendingUp, Wallet, CreditCard, Lock } from 'lucide-react';
+
+function formatTxDate(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  const now = new Date();
+  const diffH = (now - d) / 3600000;
+  if (diffH < 24) return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  if (diffH < 168) return d.toLocaleDateString('en-IN', { weekday: 'short', hour: '2-digit', minute: '2-digit' });
+  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
 import { getMe, getTransactions, createTransaction, logout } from '../../services/api';
 
 function RiskBadge({ score }) {
@@ -53,7 +63,7 @@ export default function CustomerDashboard() {
 
   const load = useCallback(async () => {
     try {
-      const [meRes, txRes] = await Promise.all([getMe(), getTransactions({ limit: 10 })]);
+      const [meRes, txRes] = await Promise.all([getMe(), getTransactions({ limit: 50 })]);
       setUser(meRes?.data?.user ?? meRes?.user ?? meRes);
       setTx(txRes?.data?.transactions ?? txRes?.transactions ?? []);
     } catch {
@@ -97,6 +107,18 @@ export default function CustomerDashboard() {
   const totalSpend = transactions.filter(t => t.status === 'completed').reduce((s, t) => s + parseFloat(t.amount || 0), 0);
   const blocked    = transactions.filter(t => t.status === 'blocked').length;
   const firstName  = user?.name?.split(' ')[0] ?? 'User';
+  const accountBalance = 482350 - totalSpend + (blocked * 0);
+  const trustScore = user?.risk_tier === 'trusted' ? 96 : user?.risk_tier === 'elevated' ? 68 : 91;
+  const accountNum = user?.id ? `XXXX-${String(user.id).slice(-4).toUpperCase()}-8291` : 'XXXX-0000-8291';
+
+  const categorySpend = transactions
+    .filter(t => t.status === 'completed')
+    .reduce((acc, t) => {
+      const cat = t.category || 'general';
+      acc[cat] = (acc[cat] || 0) + parseFloat(t.amount || 0);
+      return acc;
+    }, {});
+  const topCategories = Object.entries(categorySpend).sort((a, b) => b[1] - a[1]).slice(0, 4);
 
   return (
     <div style={{ minHeight: '100vh', background: '#080808', fontFamily: "'Space Grotesk', system-ui, sans-serif", color: '#f5f5f5' }}>
@@ -115,6 +137,11 @@ export default function CustomerDashboard() {
           <span style={{ fontSize: '11px', color: '#475569', letterSpacing: '1.5px', marginLeft: '4px' }}>SECURE BANKING</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '20px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10b981', boxShadow: '0 0 6px #10b981' }} />
+            <Lock size={11} color="#10b981" />
+            <span style={{ fontSize: '11px', color: '#10b981', fontWeight: '600', letterSpacing: '0.3px' }}>AI Protection Active</span>
+          </div>
           <button onClick={() => navigate('/devices')} style={{ background: 'none', border: 'none', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <Monitor size={15} /> Devices
           </button>
@@ -156,12 +183,42 @@ export default function CustomerDashboard() {
           </motion.button>
         </div>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', marginBottom: '24px' }}>
-          <StatCard label="Total Spent (7 days)" value={`₹${totalSpend.toLocaleString('en-IN')}`} icon={TrendingUp} accent="#22c55e" sub="Across completed transactions" />
-          <StatCard label="Blocked Transactions" value={blocked} icon={AlertCircle} accent="#ef4444" sub="High-risk payments stopped" />
-          <StatCard label="Risk Status" value={user?.risk_tier === 'standard' ? 'Standard' : user?.risk_tier ?? 'Standard'} icon={ShieldCheck} accent="#10b981" sub="Behavioral trust tier" />
+        {/* Account + Stats */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+          <div style={{
+            background: 'linear-gradient(135deg, rgba(16,185,129,0.12) 0%, rgba(16,185,129,0.04) 100%)',
+            border: '1px solid rgba(16,185,129,0.2)', borderRadius: '12px', padding: '20px 24px',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
+              <span style={{ fontSize: '12px', color: '#64748b', fontWeight: '500', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Available Balance</span>
+              <Wallet size={16} color="#10b981" />
+            </div>
+            <div style={{ fontSize: '32px', fontWeight: '700', color: '#f1f5f9', letterSpacing: '-0.5px', fontFamily: "'JetBrains Mono', monospace" }}>
+              ₹{Math.max(accountBalance, 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+            </div>
+            <div style={{ display: 'flex', gap: '16px', marginTop: '10px', fontSize: '12px', color: '#64748b' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><CreditCard size={12} /> {accountNum}</span>
+              <span>Savings · Cogniq Secure</span>
+            </div>
+          </div>
+          <StatCard label="Spent (7 days)" value={`₹${totalSpend.toLocaleString('en-IN')}`} icon={TrendingUp} accent="#22c55e" sub={`${transactions.filter(t => t.status === 'completed').length} transactions`} />
+          <StatCard label="Blocked" value={blocked} icon={AlertCircle} accent="#ef4444" sub="Fraud attempts stopped" />
+          <StatCard label="Trust Score" value={`${trustScore}%`} icon={ShieldCheck} accent="#10b981" sub={user?.risk_tier === 'trusted' ? 'Trusted tier' : `${user?.risk_tier ?? 'standard'} tier`} />
         </div>
+
+        {topCategories.length > 0 && (
+          <div style={{ background: 'rgba(255,255,255,0.025)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: '12px', padding: '16px 24px', marginBottom: '24px' }}>
+            <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px', letterSpacing: '0.5px', textTransform: 'uppercase' }}>Spending by Category</div>
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+              {topCategories.map(([cat, amt]) => (
+                <div key={cat} style={{ flex: '1 1 120px', padding: '10px 14px', background: 'rgba(255,255,255,0.03)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ fontSize: '11px', color: '#64748b', textTransform: 'capitalize', marginBottom: '4px' }}>{cat}</div>
+                  <div style={{ fontSize: '16px', fontWeight: '600', color: '#e2e8f0', fontFamily: "'JetBrains Mono', monospace" }}>₹{amt.toLocaleString('en-IN')}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Send Money Panel */}
         <AnimatePresence>
@@ -225,10 +282,19 @@ export default function CustomerDashboard() {
                       ) : (
                         <div style={{ fontSize: '13px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
-                            <span style={{ fontWeight: '600', color: '#f1f5f9' }}>Risk Score: {txResult.riskAssessment?.riskScore?.toFixed(1)}</span>
+                            {txResult.riskAssessment?.riskScore >= 70 ? (
+                              <span style={{ fontWeight: '700', color: '#ef4444', letterSpacing: '0.5px' }}>TRANSACTION BLOCKED</span>
+                            ) : (
+                              <span style={{ fontWeight: '600', color: '#f1f5f9' }}>Risk Score: {txResult.riskAssessment?.riskScore?.toFixed(1)}</span>
+                            )}
                             <RiskBadge score={txResult.riskAssessment?.riskScore} />
                           </div>
                           <span style={{ color: '#94a3b8' }}>{txResult.riskAssessment?.explanation || txResult.riskAssessment?.recommendedAction}</span>
+                          {txResult.riskAssessment?.riskScore >= 70 && (
+                            <div style={{ marginTop: '8px', fontSize: '12px', color: '#fca5a5' }}>
+                              This payment was halted automatically. Our security team has been notified.
+                            </div>
+                          )}
                         </div>
                       )}
                     </motion.div>
@@ -252,22 +318,24 @@ export default function CustomerDashboard() {
           ) : (
             <div>
               {/* Header row */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 100px', padding: '10px 24px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                {['Merchant', 'Amount', 'Category', 'Channel', 'Status', 'Risk Score'].map(h => (
+              <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 0.8fr 0.8fr 0.8fr 1fr 90px', padding: '10px 24px', borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                {['Merchant', 'Amount', 'Date', 'Category', 'Channel', 'Status', 'Risk'].map(h => (
                   <span key={h} style={{ fontSize: '11px', color: '#475569', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase' }}>{h}</span>
                 ))}
               </div>
               {transactions.map(tx => (
                 <div key={tx.id} style={{
-                  display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr 1fr 100px',
+                  display: 'grid', gridTemplateColumns: '1.4fr 1fr 0.8fr 0.8fr 0.8fr 1fr 90px',
                   padding: '14px 24px', borderBottom: '1px solid rgba(255,255,255,0.03)',
                   alignItems: 'center', transition: 'background 0.15s',
+                  background: tx.status === 'blocked' ? 'rgba(239,68,68,0.03)' : 'transparent',
                 }}
-                  onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
-                  onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+                  onMouseEnter={e => e.currentTarget.style.background = tx.status === 'blocked' ? 'rgba(239,68,68,0.06)' : 'rgba(255,255,255,0.02)'}
+                  onMouseLeave={e => e.currentTarget.style.background = tx.status === 'blocked' ? 'rgba(239,68,68,0.03)' : 'transparent'}
                 >
                   <span style={{ fontWeight: '500', color: '#e2e8f0' }}>{tx.merchant}</span>
-                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', color: '#f1f5f9' }}>₹{parseFloat(tx.amount).toLocaleString('en-IN')}</span>
+                  <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '13px', color: tx.status === 'blocked' ? '#fca5a5' : '#f1f5f9' }}>₹{parseFloat(tx.amount).toLocaleString('en-IN')}</span>
+                  <span style={{ color: '#64748b', fontSize: '12px', fontFamily: "'JetBrains Mono', monospace" }}>{formatTxDate(tx.timestamp)}</span>
                   <span style={{ color: '#94a3b8', textTransform: 'capitalize' }}>{tx.category}</span>
                   <span style={{ color: '#94a3b8', textTransform: 'capitalize' }}>{tx.channel}</span>
                   <span style={{

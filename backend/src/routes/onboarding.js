@@ -76,8 +76,13 @@ router.post('/kyc/verify', upload.single('documentImage'), async (req, res) => {
         success: true,
         data: {
           isLikelySynthetic: true,
-          confidence: 0.91,
-          flags: ['inconsistent_noise_pattern', 'ela_anomaly_detected'],
+          confidence: 0.94,
+          flags: [
+            'ELA compression artifact mismatch detected',
+            'Pixel noise distribution inconsistent with camera capture',
+            'Metadata strip indicates synthetic generation pipeline',
+            'Font rendering does not match government ID template',
+          ],
           documentType,
         },
       });

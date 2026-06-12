@@ -147,14 +147,23 @@ export async function scoreTransaction({
     }
   }
 
+  let userEmail = null;
+  try {
+    const userRes = await pgPool.query('SELECT email FROM users WHERE id = $1', [userId]);
+    userEmail = userRes.rows[0]?.email ?? null;
+  } catch (_) {}
+
   try {
     emitRiskEvent('risk:new_event', {
       userId,
+      email: userEmail,
+      userEmail,
       riskScore,
       riskLevel,
       riskFactors,
       recommendedAction,
-      action: 'transaction',
+      action: recommendedAction,
+      actionType: 'transaction',
       eventId: eventRow?.id || null,
       timestamp: eventRow?.timestamp || new Date().toISOString(),
     });

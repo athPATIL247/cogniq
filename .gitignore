@@ -20,5 +20,17 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
+# Editors
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# E2E Tests
+frontend/e2e-smoke.mjs
+
 # Custom overrides
 Docs.md
+temp/

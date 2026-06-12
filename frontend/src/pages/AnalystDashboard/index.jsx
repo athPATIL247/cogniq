@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { ThreatPulseOrb } from '../../components/ThreatPulseOrb';
 import { RiskFeed } from '../../components/RiskFeed';
 import { useRiskFeed } from '../../hooks/useRiskFeed';
-import { getDashboardStats, getActiveAlerts, updateAlert, getEntityGraph, getAllUsers } from '../../services/api';
+import { getDashboardStats, getAllAlerts, updateAlert, getAllUsers } from '../../services/api';
 
 function StatCard({ label, value, color = '#10b981', sub }) {
   return (
@@ -32,6 +32,39 @@ function getOrbLevel(score) {
   return 'normal';
 }
 
+function RiskDistribution({ dist }) {
+  if (!dist) return null;
+  const segments = [
+    { key: 'low', label: 'Low', color: '#22c55e', count: dist.low ?? 0 },
+    { key: 'medium', label: 'Med', color: '#f59e0b', count: dist.medium ?? 0 },
+    { key: 'high', label: 'High', color: '#f97316', count: dist.high ?? 0 },
+    { key: 'critical', label: 'Crit', color: '#ef4444', count: dist.critical ?? 0 },
+  ];
+  const total = segments.reduce((s, x) => s + x.count, 0) || 1;
+
+  return (
+    <div style={{ marginTop: '8px' }}>
+      <div style={{ fontSize: '10px', color: '#64748b', letterSpacing: '1.5px', textTransform: 'uppercase', marginBottom: '10px', fontWeight: '600' }}>
+        Risk Distribution (24h)
+      </div>
+      <div style={{ display: 'flex', height: '6px', borderRadius: '3px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)', marginBottom: '10px' }}>
+        {segments.map((s) => s.count > 0 && (
+          <div key={s.key} style={{ width: `${(s.count / total) * 100}%`, background: s.color, transition: 'width 0.5s' }} />
+        ))}
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+        {segments.map((s) => (
+          <div key={s.key} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '2px', background: s.color, flexShrink: 0 }} />
+            <span style={{ color: '#64748b' }}>{s.label}</span>
+            <span style={{ color: '#94a3b8', fontFamily: "'JetBrains Mono', monospace", marginLeft: 'auto' }}>{s.count}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function AnalystDashboard() {
   const navigate = useNavigate();
   const { events, clearEvents, connected } = useRiskFeed();
@@ -45,7 +78,7 @@ export default function AnalystDashboard() {
     try {
       const [statsRes, alertsRes, usersRes] = await Promise.allSettled([
         getDashboardStats(),
-        getActiveAlerts(),
+        getAllAlerts({ limit: 50 }),
         getAllUsers(),
       ]);
       if (statsRes.status === 'fulfilled') {
@@ -54,10 +87,20 @@ export default function AnalystDashboard() {
         setAvgRisk(s?.avgRiskScore || 0);
       }
       if (alertsRes.status === 'fulfilled') {
-        setAlerts(alertsRes.value?.data || []);
+        const raw = alertsRes.value?.data || [];
+        const sorted = [...raw].sort((a, b) => {
+          const sev = { critical: 0, high: 1, medium: 2, low: 3 };
+          const sa = sev[a.severity] ?? 4;
+          const sb = sev[b.severity] ?? 4;
+          if (sa !== sb) return sa - sb;
+          if (a.status === 'active' && b.status !== 'active') return -1;
+          if (b.status === 'active' && a.status !== 'active') return 1;
+          return 0;
+        });
+        setAlerts(sorted);
       }
       if (usersRes.status === 'fulfilled') {
-        setUsers((usersRes.value?.data?.users || usersRes.value?.data || []).slice(0, 20));
+        setUsers(usersRes.value?.data?.users || usersRes.value?.data || []);
       }
     } catch (err) {
       console.error('Failed to load analyst data:', err);
@@ -70,7 +113,7 @@ export default function AnalystDashboard() {
   useEffect(() => {
     if (events.length === 0) return;
     const recentEvents = events.slice(0, 10);
-    const avg = recentEvents.reduce((sum, e) => sum + (e.riskScore ?? 0), 0) / recentEvents.length;
+    const avg = recentEvents.reduce((sum, e) => sum + parseFloat(e.riskScore ?? 0), 0) / recentEvents.length;
     setAvgRisk(Math.round(avg));
   }, [events]);
 
@@ -90,8 +133,8 @@ export default function AnalystDashboard() {
   };
 
   const tabs = [
-    { id: 'feed', label: 'Live Feed' },
-    { id: 'alerts', label: `Alerts ${alerts.filter(a => a.status === 'active').length > 0 ? `(${alerts.filter(a => a.status === 'active').length})` : ''}` },
+    { id: 'feed', label: `Live Feed${events.length > 0 ? ` · ${events.length}` : ''}` },
+    { id: 'alerts', label: `Alerts ${alerts.filter(a => a.status === 'active' || a.status === 'investigating').length > 0 ? `(${alerts.filter(a => a.status === 'active' || a.status === 'investigating').length})` : ''}` },
     { id: 'users', label: 'Users' },
   ];
 
@@ -130,8 +173,9 @@ export default function AnalystDashboard() {
               <div style={{ fontSize: '16px', fontWeight: '700', letterSpacing: '-0.3px' }}>Cogniq</div>
               <div style={{ fontSize: '11px', color: '#64748b', letterSpacing: '1px' }}>ANALYST DASHBOARD</div>
             </div>
+            <span style={{ marginLeft: '8px', fontSize: '12px', color: '#475569' }}>Ravi Analyst · SOC-IN-01</span>
             <div style={{
-              marginLeft: '16px', display: 'flex', alignItems: 'center', gap: '6px',
+              marginLeft: '12px', display: 'flex', alignItems: 'center', gap: '6px',
               padding: '4px 10px', borderRadius: '20px',
               background: connected ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
               border: `1px solid ${connected ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`,
@@ -176,6 +220,7 @@ export default function AnalystDashboard() {
                 <StatCard label="Blocked Today" value={stats.blockedToday ?? 0} color="#f97316" />
                 <StatCard label="Users Monitored" value={stats.totalUsersMonitored ?? 0} color="#10b981" />
                 <StatCard label="Avg Risk Score" value={`${Math.round(stats.avgRiskScore ?? 0)}`} color={avgRisk > 60 ? '#ef4444' : avgRisk > 35 ? '#f59e0b' : '#22c55e'} sub="last 24h" />
+                <RiskDistribution dist={stats.riskScoreDistribution} />
               </div>
             )}
 
@@ -219,6 +264,14 @@ export default function AnalystDashboard() {
               <AnimatePresence mode="wait">
                 {activeTab === 'feed' && (
                   <motion.div key="feed" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px', padding: '0 4px' }}>
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>
+                        Real-time risk events across all monitored accounts
+                      </span>
+                      <span style={{ fontSize: '11px', color: connected ? '#10b981' : '#ef4444', fontFamily: "'JetBrains Mono', monospace" }}>
+                        {connected ? '● STREAMING' : '○ DISCONNECTED'}
+                      </span>
+                    </div>
                     <RiskFeed events={events} />
                   </motion.div>
                 )}
@@ -250,10 +303,23 @@ export default function AnalystDashboard() {
                               {alert.severity?.toUpperCase()}
                             </span>
                             <span style={{ fontSize: '12px', color: '#64748b' }}>{alert.user?.email}</span>
+                            {alert.createdAt && (
+                              <span style={{ fontSize: '10px', color: '#475569', fontFamily: "'JetBrains Mono', monospace" }}>
+                                {new Date(alert.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                              </span>
+                            )}
                           </div>
-                          <p style={{ margin: 0, fontSize: '14px', color: '#cbd5e1' }}>{alert.description}</p>
+                          <p style={{ margin: 0, fontSize: '14px', color: '#cbd5e1', lineHeight: 1.5 }}>{alert.description}</p>
+                          <div style={{ marginTop: '8px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <span style={{ fontSize: '11px', color: '#475569', padding: '2px 8px', background: 'rgba(255,255,255,0.04)', borderRadius: '4px' }}>
+                              {alert.status?.replace('_', ' ')}
+                            </span>
+                            {(alert.riskFactors || alert.risk_factors || [])?.slice?.(0, 2).map((f, i) => (
+                              <span key={i} style={{ fontSize: '10px', color: '#64748b', fontFamily: 'monospace' }}>{typeof f === 'string' ? f : f}</span>
+                            ))}
+                          </div>
                         </div>
-                        {alert.status === 'active' && (
+                        {(alert.status === 'active' || alert.status === 'investigating') && (
                           <button
                             onClick={() => resolveAlert(alert.id)}
                             style={{

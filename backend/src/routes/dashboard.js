@@ -163,4 +163,30 @@ router.get('/users', async (req, res) => {
   }
 });
 
+router.get('/events', async (req, res) => {
+  try {
+    const limit = Math.min(100, parseInt(req.query.limit || '50', 10));
+    const { rows } = await pgPool.query(
+      `SELECT
+         re.id,
+         re.event_type       AS "actionType",
+         re.risk_score       AS "riskScore",
+         re.risk_factors     AS "factors",
+         re.action_taken     AS "action",
+         re.ip_address       AS "ipAddress",
+         re.timestamp,
+         u.email             AS "email"
+       FROM risk_events re
+       JOIN users u ON re.user_id = u.id
+       ORDER BY re.timestamp DESC
+       LIMIT $1`,
+      [limit]
+    );
+    res.json({ success: true, data: rows });
+  } catch (err) {
+    console.error('[GET /dashboard/events]', err);
+    res.status(500).json({ success: false, error: 'Failed to fetch dashboard events' });
+  }
+});
+
 export default router;

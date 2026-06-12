@@ -61,6 +61,9 @@ export const getMe = () => api.get('/auth/me').then((r) => r.data);
 export const getDashboardStats = () =>
   api.get('/dashboard/stats').then((r) => r.data);
 
+export const getDashboardEvents = (params = {}) =>
+  api.get('/dashboard/events', { params }).then((r) => r.data);
+
 export const getActiveAlerts = (status = 'active') =>
   api.get('/dashboard/alerts', { params: { status } }).then((r) => r.data);
 
