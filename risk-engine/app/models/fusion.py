@@ -69,11 +69,10 @@ class FusionEngine:
 
         weighted_sum = sum(scores[k] * weights[k] for k in weights if k in scores)
         
-        # Escalate final score if any single factor is extremely high (prevents dilution)
-        max_subscore = max(scores.values()) if scores else 0.0
-        if max_subscore >= 60.0:
-            # Force the final score high enough to block if one sub-score is critical
-            weighted_sum = max(weighted_sum, max_subscore * 1.4)
+        # Escalate final score if transaction risk is extremely high (prevents dilution from blocking)
+        tx_score = scores.get("transaction", 0.0)
+        if tx_score >= 60.0:
+            weighted_sum = max(weighted_sum, tx_score * 1.4)
             
         final_score = float(min(max(weighted_sum, 0.0), 100.0))
 
